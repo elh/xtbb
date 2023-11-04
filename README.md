@@ -35,7 +35,22 @@ xtbb - {:url http://localhost:9999/_xtdb/query, :dir /tmp/xtbb, :editor vim, :fo
 Write your queries in an editor.
 ```clojure
 ;; xtbb - A simple XTDB querying CLI
-;; Save a query in this file to run it
+;; Save a query edn map in this file to run it
+;; -----------------------------------------------------------------------------
+;;
+;; ;; Provide just the query map...
+;; {:find [?e]
+;;  :where [[?e :xt/id]]
+;;  :limit 10}
+;;
+;; ;; ... Or provide a map with :query, :in-args, :valid-time, :tx-time, :tx-id
+;; ;; This format emulates the HTTP API
+;; {:query {:find [?e]
+;;          :in [?n]
+;;          :where [[?e :xt/id] [?e :name ?n]]
+;;          :limit 5}
+;;  :in-args ["Amelia"]
+;;  :valid-time "2023-11-01T21:23:00Z"}
 
 {:find [?e ?n],
  :where
@@ -78,3 +93,7 @@ xtbb
 1. CLIs are fun. Why not both?
 2. The GUI seems crash on some valid expressions used in the `:find`.
 3. The GUI can be hard to read for verbose errors.
+
+Querying from the clojure REPL is nice too, but I like being able to customize further and make it more file oriented.
+
+Contributions welcome.
