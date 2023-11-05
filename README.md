@@ -10,17 +10,17 @@ A simple XTDB querying CLI using Babashka.
 
 ### Usage
 
-Run xtbb! Interactively query like a repl.
+Run xtbb! Interactively query XTDB like a repl.
 ```plaintext
 $ xtbb
 xtbb - {:url http://localhost:9999/_xtdb/query, :dir /tmp/xtbb, :editor vim, :format tabular}
 
 [Enter] to edit query, [Ctrl-C] to quit
 
-{:query
- {:find [?e], :in [?n], :where [[?e :xt/id] [?e :name ?n]], :limit 5},
- :in-args ["Amelia"],
- :valid-time "2023-11-01T21:23:00Z"}
+{:find [?e ?n]
+ :where [[?e :xt/id][?e :name ?n][?e :active true]]
+ :order-by [[?n :asc]]
+ :limit 5}
 "Elapsed time: 17.101709 msecs"
 
 |                          ?e |      ?n |
@@ -36,12 +36,7 @@ xtbb - {:url http://localhost:9999/_xtdb/query, :dir /tmp/xtbb, :editor vim, :fo
 [Enter] to edit query, [Ctrl-C] to quit
 ```
 
-Execute a single query non-interactively.
-```plaintext
-$ ./xtbb.clj --query "{:find [?e], :where [[?e :xt/id]], :limit 10}"
-```
-
-Write your queries in an editor.
+Prepare your queries with your preferred editor.
 ```clojure
 ;; xtbb - A simple XTDB querying CLI
 ;; Save a query edn map in this file to run it
@@ -70,7 +65,14 @@ Write your queries in an editor.
  :limit 5}
 ```
 
-Flags:
+#### Non-interactive mode
+
+Just execute a single query.
+```plaintext
+$ ./xtbb.clj --query "{:find [?e], :where [[?e :xt/id]], :limit 10}"
+```
+
+#### Flags
 * `--url`:           XTDB REST API URL. Defaults to the xtdb-in-a-box default URL.
 * `--query`:         Query edn map. If provided, this will not run in interactive mode but just execute that query.
 * `--editor`:        Editor to use for writing the query. Defaults to $EDITOR or "vim".
