@@ -33,7 +33,7 @@ xtbb>
 
 #### Editor mode
 
-Write queries with your preferred editor
+Write queries with your preferred editor. This is my favorite way to use it.
 ```plaintext
 $ xtbb --editor vim
 xtbb - {:url http://localhost:9999/_xtdb/query, :query nil, :editor vim, :dir /tmp/xtbb, :format tabular}
@@ -99,6 +99,7 @@ $ xtbb --query "{:find [?e], :where [[?e :xt/id]], :limit 10}"
 * `--url`:           XTDB REST API URL. Defaults to the xtdb-in-a-box default URL.
 * `--query`:         If a query is provided, just execute that query and exit. This disables default interactive mode.
 * `--editor`:        If editor is provided (e.g. "vim"), it will be opened to edit the query as a file.
+* `--history`:       If enabled, save a history of queries to a directory. Defaults to "<--dir>/history".
 * `--dir`:           Dir to save app data to like the working query and query history. Defaults to "/tmp/xtbb".
 * `--format`:        Result print formatting. Options: "tabular", "maps", "raw". Defaults to "tabular".
 

@@ -15,11 +15,13 @@
 ;; `--url`:           XTDB REST API URL. Defaults to the xtdb-in-a-box default URL.
 ;; `--query`:         If a query is provided, just execute that query and exit. This disables default interactive mode.
 ;; `--editor`:        If editor is provided (e.g. "vim"), it will be opened to edit the query as a file.
+;; `--history`:       If enabled, save a history of queries to a directory. Defaults to "<--dir>/history".
 ;; `--dir`:           Dir to save app data to like the working query and query history. Defaults to "/tmp/xtbb".
 ;; `--format`:        Result print formatting. Options: "tabular", "maps", "raw". Defaults to "tabular".
 (def default-opts {:url "http://localhost:9999/_xtdb/query"
                    :query nil
                    :editor nil
+                   :history false
                    :dir "/tmp/xtbb"
                    :format "tabular"})
 
@@ -91,8 +93,10 @@
               history-file (format "%s/%s.edn" query-history-dir (unix-time))]
 
           ;; save query history
-          (io/make-parents history-file)
-          (spit history-file (pp-str in))
+          (let [history-file (format "%s/%s.edn" query-history-dir (unix-time))]
+            (when (:history opts)
+              (io/make-parents history-file)
+              (spit history-file (pp-str in))))
 
           ;; print results
           (case (:format opts)
