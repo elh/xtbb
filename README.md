@@ -15,8 +15,12 @@ Run xtbb! Interactively query like a repl.
 $ xtbb
 xtbb - {:url http://localhost:9999/_xtdb/query, :dir /tmp/xtbb, :editor vim, :format tabular}
 
-[Enter] to query, [Ctrl-C] to quit
+[Enter] to edit query, [Ctrl-C] to quit
 
+{:query
+ {:find [?e], :in [?n], :where [[?e :xt/id] [?e :name ?n]], :limit 5},
+ :in-args ["Amelia"],
+ :valid-time "2023-11-01T21:23:00Z"}
 "Elapsed time: 17.101709 msecs"
 
 |                          ?e |      ?n |
@@ -29,7 +33,12 @@ xtbb - {:url http://localhost:9999/_xtdb/query, :dir /tmp/xtbb, :editor vim, :fo
 
 5 results
 
-[Enter] to query, [Ctrl-C] to quit
+[Enter] to edit query, [Ctrl-C] to quit
+```
+
+Execute a single query non-interactively.
+```plaintext
+$ ./xtbb.clj --query "{:find [?e], :where [[?e :xt/id]], :limit 10}"
 ```
 
 Write your queries in an editor.
@@ -63,6 +72,7 @@ Write your queries in an editor.
 
 Flags:
 * `--url`:           XTDB REST API URL. Defaults to the xtdb-in-a-box default URL.
+* `--query`:         Query edn map. If provided, this will not run in interactive mode but just execute that query.
 * `--editor`:        Editor to use for writing the query. Defaults to $EDITOR or "vim".
 * `--dir`:           Dir to save app data to like the working query and query history. Defaults to "/tmp/xtbb".
 * `--format`:        Result print formatting. Options: "tabular", "maps", "raw". Defaults to "tabular".
