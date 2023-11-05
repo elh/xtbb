@@ -14,13 +14,12 @@
 
 ;; `--url`:           XTDB REST API URL. Defaults to the xtdb-in-a-box default URL.
 ;; `--query`:         If a query is provided, just execute that query and exit. This disables default interactive mode.
-;; `--editor`:        Editor to use for writing the query. Defaults to $EDITOR or "vim".
+;; `--editor`:        If editor is provided (e.g. "vim"), it will be opened to edit the query as a file.
 ;; `--dir`:           Dir to save app data to like the working query and query history. Defaults to "/tmp/xtbb".
 ;; `--format`:        Result print formatting. Options: "tabular", "maps", "raw". Defaults to "tabular".
 (def default-opts {:url "http://localhost:9999/_xtdb/query"
                    :query nil
-                   :editor (or (System/getenv "EDITOR")
-                               "vim")
+                   :editor nil
                    :dir "/tmp/xtbb"
                    :format "tabular"})
 
@@ -30,10 +29,6 @@
 (def query-history-dir (format "%s/history" (:dir opts)))
 
 ;;; Functions
-
-(defn get-input []
-  (println "\n[Enter] to edit query, [Ctrl-C] to quit")
-  (read-line))
 
 (defn unix-time []
   (quot (System/currentTimeMillis) 1000))
@@ -104,29 +99,38 @@
             "tabular" (pp/print-table resp-maps)
             "maps" (pp/pprint resp-maps)
             "raw" (pp/pprint resp-body))
-          (println (format "\n%d results" (count resp-maps))))))))
+          (println (format "\n%d results\n" (count resp-maps))))))))
 
-(defn query-loop []
+(defn edit-query [editor-name]
+  ;; if query file DNE, create it with some default instructions
   (io/make-parents query-file)
+  (when (not (.exists (io/file query-file)))
+    (spit query-file default-query-file))
+
+  ;; edit query in a working file
+  (let [f (io/file query-file)]
+    (shell editor-name (.getPath f))
+    (slurp f)))
+
+;; if editor is provided, edit query in editor, otherwise just take query from the command line.
+(defn query-loop []
   (loop []
-    ;; start next query
-    (get-input)
-    ;; if query file DNE, create it with some default instructions
-    (when (not (.exists (io/file query-file)))
-      (spit query-file default-query-file))
-    ;; edit query in a working file
-    (let [in-str (let [f (io/file query-file)]
-                   (shell (:editor opts) (.getPath f))
-                   (slurp f))
+    (let [in-str (if (:editor opts)
+                   (do (println "[Enter] to write query in editor, [Ctrl-C] to quit")
+                       (read-line)
+                       (edit-query (:editor opts)))
+                   (do (print "xtbb> ")
+                       (flush)
+                       (read-line)))
           in (try (edn/read-string in-str)
-                  (catch Exception _ nil))
-          _ (pp/pprint in)]
-      (execute-query in))
-    (recur)))
+                  (catch Exception _ nil))]
+      (when (:editor opts) (pp/pprint in))
+      (execute-query in)
+      (recur))))
 
 ;;; Main
 
-(println "xtbb -" opts)
+(println "xtbb -" opts "\n")
 (if (:query opts)
   (execute-query (try (edn/read-string (:query opts))
                       (catch Exception _ nil)))
