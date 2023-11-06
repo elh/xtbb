@@ -89,8 +89,7 @@
       (if (not= 200 (:status resp))
         (print-err resp)
         (let [resp-body (edn/read-string (:body resp))
-              resp-maps (map (fn [m] (zipmap (get-in args [:query :find]) m)) resp-body)
-              history-file (format "%s/%s.edn" query-history-dir (unix-time))]
+              resp-maps (map (fn [m] (zipmap (get-in args [:query :find]) m)) resp-body)]
 
           ;; save query history
           (let [history-file (format "%s/%s.edn" query-history-dir (unix-time))]
