@@ -4,7 +4,7 @@ A simple [XTDB](https://github.com/xtdb/xtdb) querying CLI.
 
 * Queries can be written at the command line or in your preferred editor.
 * Results can be printed in a few formats: tabular, as zipped maps, raw.
-* Error contents in EDN are pretty printed.
+* Error contents in EDN are pretty-printed.
 
 <br>
 
@@ -127,7 +127,7 @@ xtbb
 
 ### Motivation. Why not use the query GUI?
 1. CLIs are fun. Why not both?
-2. The GUI seems crash on some valid expressions used in the `:find`.
+2. The GUI seems to crash on some valid expressions used in the `:find`.
 3. The GUI can be hard to read for verbose errors.
 
 Querying from the clojure REPL is nice too, but I like having an opinionated tool that I can distribute as a CLI.
